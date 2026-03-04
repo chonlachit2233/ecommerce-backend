@@ -24,6 +24,10 @@ export const UserRegister = async (req: Request, res: Response) => {
         })
         console.log(Useremail)
 
+        if(Useremail) {
+            return res.status(400).json({message:'Email already exists'})
+        }
+
         const hasspassword = await bcrypt.hash(password, 10)
 
         console.log(hasspassword)
@@ -39,7 +43,7 @@ export const UserRegister = async (req: Request, res: Response) => {
 
 
 
-        res.send('Hello Register')
+        res.send('Register success')
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Server error' })
@@ -88,7 +92,7 @@ export const UserLogin = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             message: 'Login sucess',
-            token
+            token, payload
         })
     } catch (err) {
         console.log(err)
