@@ -11,7 +11,7 @@ export const CategoryCreate = async (req: Request, res: Response) => {
             }
         })
         console.log(categorycrate)
-        res.send('Hello Category Create')
+        res.send('Create category success')
     } catch (err) {
         console.log(err)
     }
