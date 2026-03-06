@@ -1,5 +1,7 @@
 import { Request, Response } from "express"
 import prisma from "../config/prisma"
+import { v2 as cloudinary } from 'cloudinary';
+import { ImageType } from "../types/image";
 
 export const Createproduct = async (req: Request, res: Response) => {
     try {
@@ -14,12 +16,11 @@ export const Createproduct = async (req: Request, res: Response) => {
                 categoryId: parseInt(categoryId),
 
                 images: {
-                    create: images.map((itemp: string) => ({
-                        asset_id: itemp,
-                        public_id: itemp,
-                        url: itemp,
-                        secure_url: itemp
-
+                    create: images.map((item: ImageType) => ({
+                        asset_id: item.asset_id,
+                        public_id: item.public_id,
+                        url: item.url,
+                        secure_url: item.secure_url
                     }))
                 }
             }
@@ -102,11 +103,11 @@ export const Updateproduct = async (req: Request, res: Response) => {
                 categoryId: parseInt(categoryId),
 
                 images: {
-                    create: images.map((itemp: string) => ({
-                        asset_id: itemp,
-                        pubblic_id: itemp,
-                        url: itemp,
-                        secure_url: itemp
+                    create: images.map((itemp: ImageType) => ({
+                        asset_id: itemp.asset_id,
+                        public_id: itemp.public_id,
+                        url: itemp.url,
+                        secure_url: itemp.secure_url
                     }))
                 }
             }
@@ -239,9 +240,9 @@ export const Searchbyproduct = async (req: Request, res: Response) => {
             await PriceProduct(req, res, price)
         }
 
-        if(category) {
+        if (category) {
             console.log('category--->', category)
-            await Categoryproduct(req,res,category)
+            await Categoryproduct(req, res, category)
         }
         res.status(200).json({
             message: 'Search product success'
@@ -249,5 +250,46 @@ export const Searchbyproduct = async (req: Request, res: Response) => {
         })
     } catch (err) {
         console.log(err)
+    }
+}
+
+console.log(process.env.CLOUDINARY_CLOUD_NAME)
+console.log(process.env.CLOUDINARY_API_KEY)
+console.log(process.env.CLOUDINARY_API_SECRET)
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+    api_key: process.env.CLOUDINARY_API_KEY!,
+    api_secret: process.env.CLOUDINARY_API_SECRET!
+
+
+});
+
+
+
+export const createimage = async (req: Request, res: Response) => {
+    try {
+
+
+        const uploadResult = await cloudinary.uploader.upload(req.body.image, {
+            public_id: `Take-${Date.now()}`,
+            resource_type: 'auto',
+            folder: 'ecom2026'
+        })
+
+        res.send(uploadResult)
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server error' })
+    }
+}
+export const removeimages = async (req: Request, res: Response) => {
+    try {
+
+        res.send('Hello removeimages')
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: 'Server error' })
     }
 }

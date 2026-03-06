@@ -10,8 +10,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-   url      = env("DATABASE_URL")
-  
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -41,7 +40,7 @@ model Product {
   quantity      Int
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
-  category      Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category      Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId    Int
 }
 
@@ -56,7 +55,7 @@ model Category {
 model Image {
   id         Int      @id @default(autoincrement())
   asset_id   String
-  pubbic_id  String
+  public_id  String
   url        String
   secure_url String
   createdAt  DateTime @default(now())
@@ -72,7 +71,7 @@ model Order {
   orderstatus String           @default("Not Process")
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
 }
 
@@ -92,16 +91,16 @@ model Cart {
   products  ProductOnCart[]
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
 
 model ProductOnCart {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   cartId    Int
   count     Int
   price     Float
-  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId Int
 }
