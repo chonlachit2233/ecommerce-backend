@@ -11,6 +11,6 @@ router.post('/productby',Listbyproduct)
 router.post('/search/filters',Searchbyproduct)
 
 router.post('/images',Authcheck, Admincheck, createimage )
-router.delete('/removeimages',Authcheck, Admincheck, removeimages)
+router.post('/removeimages',Authcheck, Admincheck, removeimages)
 
 export default router

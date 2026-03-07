@@ -253,15 +253,11 @@ export const Searchbyproduct = async (req: Request, res: Response) => {
     }
 }
 
-console.log(process.env.CLOUDINARY_CLOUD_NAME)
-console.log(process.env.CLOUDINARY_API_KEY)
-console.log(process.env.CLOUDINARY_API_SECRET)
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
     api_key: process.env.CLOUDINARY_API_KEY!,
     api_secret: process.env.CLOUDINARY_API_SECRET!
-
-
 });
 
 
@@ -285,8 +281,14 @@ export const createimage = async (req: Request, res: Response) => {
 }
 export const removeimages = async (req: Request, res: Response) => {
     try {
-
-        res.send('Hello removeimages')
+         
+       
+        const {public_id} = req.body
+         console.log(public_id)
+         cloudinary.uploader.destroy(public_id, (result: any)=>{
+           res.send('remove image success!!!')
+         })
+        
 
     } catch (err) {
         console.log(err)
