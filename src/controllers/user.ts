@@ -127,7 +127,7 @@ export const Addusercart = async (req: Request<{}, {}, AddtoCartBody>, res: Resp
 
         console.log(productoncart)
 
-        res.send('Hello Addusercart')
+        res.send('Add Cart Ok')
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Server error' })

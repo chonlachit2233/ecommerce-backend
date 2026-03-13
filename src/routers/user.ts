@@ -6,7 +6,7 @@ import {Authcheck,Admincheck} from '../middenware/auth-admin-check'
 router.get('/users',Authcheck,Admincheck,Getuser)
 router.post('/userchangstatus', Authcheck,Admincheck,ChangstatusUser)
 router.post('/changroleuser', Authcheck,Admincheck,ChangroleUser)
-router.post('/addusercart', Authcheck,Admincheck,Addusercart)
+router.post('/addusercart', Authcheck,Addusercart)
 router.get('/getusercart', Authcheck,Admincheck,Getusercart)
 router.delete('/emtyremovecart', Authcheck,Admincheck,emtyremovecart)
 router.post('/adduseraddress', Authcheck,Admincheck,AdduserAddress)
