@@ -213,6 +213,23 @@ export const AdduserAddress = async (req: Request, res: Response) => {
 }
 export const Saveuserorder = async (req: Request, res: Response) => {
     try {
+
+        // console.log(req.body)
+
+        // return res.send('Hello saveorder')
+
+
+
+
+
+
+
+        const { id, amount, status, currency } = req.body
+
+       
+
+
+        const amountTHB = Number(amount) / 100
         const usercart = await prisma.cart.findFirst({
             where: {
                 userId: Number(req.user?.id)
@@ -230,25 +247,25 @@ export const Saveuserorder = async (req: Request, res: Response) => {
 
 
 
-        for (const itemp of usercart.products) {
-            console.log(itemp)
+        // for (const itemp of usercart.products) {
+        //     console.log(itemp)
 
-            const product = await prisma.product.findUnique({
-                where: {
-                    id: itemp.productId
-                },
-                select: {
-                    quantity: true,
-                    title: true
-                }
-            })
-            console.log(product)
+        //     const product = await prisma.product.findUnique({
+        //         where: {
+        //             id: itemp.productId
+        //         },
+        //         select: {
+        //             quantity: true,
+        //             title: true
+        //         }
+        //     })
+        //     console.log(product)
 
-            if (!product || itemp.count > product.quantity) {
-                return res.status(400).json({ ok: false, message: `ขออภัยสินค้า ${product?.title || 'product'}หมด` })
-            }
+        //     if (!product || itemp.count > product.quantity) {
+        //         return res.status(400).json({ ok: false, message: `ขออภัยสินค้า ${product?.title || 'product'}หมด` })
+        //     }
 
-        }
+        // }
 
         const order = await prisma.order.create({
             data: {
@@ -260,16 +277,22 @@ export const Saveuserorder = async (req: Request, res: Response) => {
                     }))
                 },
                 userId: Number(req.user?.id),
-                carTotal: usercart.cartTotal
+                carTotal: usercart.cartTotal,
+                stripePaymentId: id,
+                amount: amountTHB,
+                status: status,
+                currency: currency
+
+
             }
         })
         console.log(order)
 
-        const bulkupdate = usercart.products.map((itemp)=>({
-            where:{
+        const bulkupdate = usercart.products.map((itemp) => ({
+            where: {
                 id: itemp.productId
             },
-            data:{
+            data: {
                 quantity: {
                     decrement: itemp.count
                 },
@@ -287,14 +310,14 @@ export const Saveuserorder = async (req: Request, res: Response) => {
 
 
         await prisma.cart.deleteMany({
-            where:{
+            where: {
                 userId: Number(req.user?.id)
             }
         })
 
-        res.json({ok:true, order})
+        res.json({ ok: true, order })
 
-   
+
 
     } catch (err) {
         console.log(err)
@@ -304,21 +327,21 @@ export const Saveuserorder = async (req: Request, res: Response) => {
 export const Getuserorder = async (req: Request, res: Response) => {
     try {
         const order = await prisma.order.findMany({
-            where:{
+            where: {
                 userId: Number(req.user?.id)
             },
-            select:{
-                products:{
-                    select:{
+            select: {
+                products: {
+                    select: {
                         product: true
                     }
                 }
             }
         })
-        if(order.length === 0){
-            return res.status(400).json({ok: false, message:'No order'})
+        if (order.length === 0) {
+            return res.status(400).json({ ok: false, message: 'No order' })
         }
-        res.json({ok: true, order})
+        res.json({ ok: true, order })
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Server error' })
