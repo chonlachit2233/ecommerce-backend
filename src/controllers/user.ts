@@ -85,13 +85,6 @@ export const Addusercart = async (req: Request<{}, {}, AddtoCartBody>, res: Resp
             return res.status(400).json({ message: 'User not found' })
         }
 
-        const productoncart = await prisma.productOnCart.deleteMany({
-            where: {
-                cart: {
-                    userId: users.id
-                }
-            }
-        })
 
         //check quantity 
         for (const itemp of cart) {
@@ -114,6 +107,16 @@ export const Addusercart = async (req: Request<{}, {}, AddtoCartBody>, res: Resp
 
         }
 
+
+        const productoncart = await prisma.productOnCart.deleteMany({
+            where: {
+                cart: {
+                    userId: users.id
+                }
+            }
+        })
+
+        
 
         const carts = await prisma.cart.deleteMany({
             where: {
@@ -319,13 +322,13 @@ export const Getuserorder = async (req: Request, res: Response) => {
             where: {
                 userId: Number(req.user?.id)
             },
-            select: {
-                products: {
-                    select: {
-                        product: true
-                    }
+           include: {
+            products: {
+                include: {
+                    product : true
                 }
             }
+           }
         })
         if (order.length === 0) {
             return res.status(400).json({ ok: false, message: 'No order' })
